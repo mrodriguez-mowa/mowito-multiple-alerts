@@ -35,6 +35,7 @@ export default class TelegramAlert {
             '-1001417598623': process.env.SISTEMAS_COMERCIAL as string,
             '-1001449756165': process.env.SISTEMAS_SOPORTE as string,
             '-1001650274808': process.env.CUENTAS_SOPORTE as string,
+            
         }
         const channelId = discordTable[this.chatId.toString()] ? discordTable[this.chatId.toString()] : process.env.DEV_BOT as string
 

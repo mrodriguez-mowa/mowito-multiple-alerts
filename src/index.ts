@@ -12,9 +12,8 @@ const botToken = process.env.DISCORD_TOKEN;
 const sendMessage = async (channel: Channel, message: string) => {
     try {
         if (channel?.isTextBased()) {
-            channel.send(message)
+            await channel.send(message)
             logger.info(message)
-            logger.info("Alert sent")
         }
     } catch (error) {
         logger.error(error)
@@ -30,21 +29,34 @@ const app = async () => {
     const data = await repository.getTelegramAlerts()
 
     const client = new Client({
-        intents: [IntentsBitField.Flags.GuildMessages], // Ante qué eventos responderá
+        intents: [IntentsBitField.Flags.GuildMessages]
     });
 
     try {
+        
         await client.login(botToken);
-
+        
         client.on("ready", async () => {
             try {
                 if (data.length) {
-                    data.forEach(async (el) => {
+
+                    const messagesPromises = data.map(async (el) => {
                         const channel = await client.channels.fetch(el.getChatId());
                         if (channel) {
                             await sendMessage(channel, el.getMessage());
+                        } else {
+                            logger.info("Not channel found")
                         }
                     })
+
+                    await Promise.all(messagesPromises)
+
+                    logger.info("All messages were sent")
+                    
+                    await client.destroy()
+
+                    process.exit(0)
+                    
                 }
             } catch (error) {
                 logger.error(error)
@@ -53,9 +65,7 @@ const app = async () => {
 
     } catch (error) {
         console.log(error)
-    } finally {
-        console.log("Process finished")
-    }
+    } 
 
 }
 
