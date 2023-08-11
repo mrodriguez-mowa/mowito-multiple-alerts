@@ -5,6 +5,7 @@ dotenv.config({
 
 import { Channel, Client, IntentsBitField } from 'discord.js';
 import TelegramAlertsRepository from "./repository/TelegramAlertsRepository"
+import logger from './util/logger';
 
 const botToken = process.env.DISCORD_TOKEN;
 
@@ -12,13 +13,18 @@ const sendMessage = async (channel: Channel, message: string) => {
     try {
         if (channel?.isTextBased()) {
             channel.send(message)
+            logger.info(message)
+            logger.info("Alet sent")
         }
     } catch (error) {
-
+        logger.error(error)
     }
 }
 
 const app = async () => {
+
+    logger.log("Starting process...")
+
     const repository = new TelegramAlertsRepository()
 
     const data = await repository.getTelegramAlerts()
