@@ -15,7 +15,7 @@ class TelegramAlertsRepository {
         const alerts: Array<TelegramAlert> = [];
         const connection = await pool.connect();
         try {
-            const res = await connection.query("select * from usrsms.telegram_notifications();")
+            const res = await connection.query("select * from usrsms.telegram_notifications_d();")
             if (res.rowCount > 0) {
                 res.rows.forEach(({p_chat_id, p_description, p_id_tmp, p_message}:ITelegramAlert)=> {
                     const newAlert = new TelegramAlert(p_id_tmp, p_chat_id, p_description, p_message)
@@ -31,6 +31,16 @@ class TelegramAlertsRepository {
         return alerts;
     }
 
+    public async updateAlertEight(sendingId:number): Promise<void> {
+        const connection = await pool.connect();
+        try {
+            await connection.query("insert into usrsms.tmp_ignore_notifications (campaign_id) values($1)", [sendingId])
+        } catch (error) {
+            console.log("error")
+        } finally {
+            connection.release()
+        }
+    }
 
 }
 
