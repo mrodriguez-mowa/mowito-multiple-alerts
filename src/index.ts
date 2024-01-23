@@ -31,13 +31,19 @@ const app = async () => {
     // Auto updating alert 7 and 8
 
     const alertEight = data.filter((el)=>el.getDescription() == "Query que avisa campañas con menos de 15 sms para validar sembrados" || el.getDescription() == "Query que avisa campañas de los clientes criticos")
+    const alertNoNumber = data.filter((el)=>el.getDescription() == "Query que avisa cuando las campañas finalizaron")
 
     alertEight.forEach( async (alert)=>{
         const sendingId = parseInt(alert.getMessage().split("Campaña:")[1].split("Usuario")[0].trim()) 
         await repository.updateAlertEight(sendingId)
     })
 
-    /*
+    alertNoNumber.forEach(async (alert) => {
+        const sendingId = parseInt(alert.getMessage().split("ID:")[1].split("Usuario")[0].trim()) 
+        await repository.updateAlertNoNumber(sendingId) 
+    })
+
+    
     const client = new Client({
         intents: [IntentsBitField.Flags.GuildMessages]
     });
@@ -75,7 +81,7 @@ const app = async () => {
 
     } catch (error) {
         console.log(error)
-    } */
+    } 
 
 }
 

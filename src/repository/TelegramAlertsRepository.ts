@@ -42,6 +42,17 @@ class TelegramAlertsRepository {
         }
     }
 
+    public async updateAlertNoNumber(sendingId:number): Promise<void> {
+        const connection = await pool.connect();
+        try {
+            await connection.query("insert into usrsms.tmp_ignore_notifications_v2 (campaign_id) values($1)", [sendingId])
+        } catch (error) {
+            console.log("error")
+        } finally {
+            connection.release()
+        }
+    }
+
 }
 
 export default TelegramAlertsRepository
